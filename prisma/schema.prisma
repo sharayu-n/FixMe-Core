@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String   @unique
+  phone         String?   @unique
+  password_hash String?
+  is_deleted    Boolean   @default(false)
+  deleted_at    DateTime? @db.Timestamptz(6)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @updatedAt
+
+  goals         goals[]
+  user_streaks  user_streaks?
+  daily_plan_items daily_plan_items[]
+  password_resets password_resets[]
+
+
+}
+
+model goals {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  title            String
+  description      String?
+  priority         Int       @db.SmallInt
+  target_start     DateTime? @db.Date
+  target_end       DateTime? @db.Date
+  status           Int       @db.SmallInt
+  goal_expertise   Int       @db.SmallInt
+  progress_percent Int?      @default(0)
+  is_deleted       Boolean   @default(false)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  users  users   @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  topics topics[]
+}
+
+model topics {
+  id               Int       @id @default(autoincrement())
+  goal_id          Int
+  title            String
+  description      String?
+  sequence_order   Int
+  status           Int       @db.SmallInt
+  progress_percent Int?      @default(0)
+  estimated_duration_days Int?
+  is_deleted       Boolean   @default(false)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  goals goals @relation(fields: [goal_id], references: [id], onDelete: Restrict)
+  tasks tasks[]
+}
+
+model tasks {
+  id               Int       @id @default(autoincrement())
+  topic_id         Int
+  title            String
+  description      String?
+  sequence_order   Int
+  status           Int       @db.SmallInt
+  estimated_effort_hours Int?
+  is_deleted       Boolean   @default(false)
+  deleted_at       DateTime? @db.Timestamptz(6)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+  topics topics @relation(fields: [topic_id], references: [id], onDelete: Restrict)
+  daily_plan_items daily_plan_items[]
+}
+
+model daily_plan_items {
+  id            Int       @id @default(autoincrement())
+  user_id       Int
+  task_id       Int?
+  custom_title  String?
+  date          DateTime  @db.Date
+  allocated_time Int?
+  item_order    Int
+  status        Int       @default(0)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+
+  user  users  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  task  tasks? @relation(fields: [task_id], references: [id], onDelete: SetNull)
+}
+
+
+model user_streaks {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  current_streak   Int       @default(0)
+  longest_streak   Int       @default(0)
+  last_active_date DateTime? @db.Date
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  users users @relation(fields: [user_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id])
+}
+
+model password_resets {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token_hash String   @db.Text
+  expires_at DateTime
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([token_hash])
+}
