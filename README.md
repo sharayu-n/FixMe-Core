@@ -1,4 +1,4 @@
-# 🚀 DisciplineOS
+# 🚀 FixMe : AI-Powered Productivity Microservices Platform
 
 > AI-Powered Productivity Platform built with a Microservices Architecture  
 > Transforming high-level goals into structured execution roadmaps with deterministic streak enforcement and analytics.
