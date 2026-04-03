@@ -7,7 +7,7 @@
 
 ## 📌 Overview
 
-DisciplineOS is a backend-first productivity system that converts user-defined goals into structured execution plans using Generative AI, enforces consistent daily execution through a threshold-based streak engine, and separates core logic from analytics via microservice boundaries.
+FixMe is a backend-first productivity system that converts user-defined goals into structured execution plans using Generative AI, enforces consistent daily execution through a threshold-based streak engine, and separates core logic from analytics via microservice boundaries.
 
 The system was designed with production engineering principles in mind — focusing on idempotent state transitions, service separation, API contract control (DTOs), and quota-aware AI orchestration.
 
@@ -15,11 +15,11 @@ The system was designed with production engineering principles in mind — focus
 
 # 🏗 Architecture
 
-DisciplineOS follows a modular microservice architecture:
+FixMe follows a modular microservice architecture:
 
-discipline-core-service        → Port 3000  
-discipline-analytics-service   → Port 4000  
-discipline-notification-service (planned)
+FixMe-core-service        → Port 3000  
+FixMe-analytics-service   → Port 4000  
+FixMe-notification-service (planned)
 
 ---
 
@@ -43,7 +43,7 @@ discipline-notification-service (planned)
 
 ---
 
-## 2️⃣ Analytics Service (discipline-analytics-service)
+## 2️⃣ Analytics Service (FixMe-analytics-service)
 
 ### Responsibilities:
 - Weekly task completion aggregation
