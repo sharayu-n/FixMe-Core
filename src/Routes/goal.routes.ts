@@ -2,7 +2,7 @@
 import { Router } from "express";
 import { requireAuth } from "../Middlewares/auth.middleware";
 import { createGoal } from "../Controllers/goal.controller";
-import { prisma } from "../Configs/prisma";
+import prisma  from "../Utilities/prisma";
 
 const router = Router();
 

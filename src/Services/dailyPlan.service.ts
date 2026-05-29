@@ -1,4 +1,4 @@
-import { prisma } from "../Configs/prisma";
+import prisma from "../Utilities/prisma";
 import { streakService } from "./streak.service";
 
 const PENDING = 0;

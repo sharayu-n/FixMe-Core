@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "Node16",
+    "moduleResolution": "node16",
     "types": ["node"],
     "typeRoots": ["./src/Types", "./node_modules/@types"],
     "rootDir": ".",
@@ -15,7 +15,6 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "ignoreDeprecations": "5.0"
   },
   "include": ["src", "prisma.config.ts"],
   "exclude": ["node_modules", "dist"]

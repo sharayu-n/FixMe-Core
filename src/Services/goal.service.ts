@@ -1,5 +1,5 @@
 // src/Services/goal.service.ts
-import { prisma } from "../Configs/prisma";
+import prisma from "../Utilities/prisma";
 import { aiService } from "./ai.service";
 import {
   GoalPriority,

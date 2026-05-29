@@ -1,4 +1,4 @@
-import { prisma } from "../Configs/prisma";
+import prisma from "../Utilities/prisma";
 
 class StreakService {
   async evaluateAndUpdate(userId: number) {
