@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import response from "express";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
