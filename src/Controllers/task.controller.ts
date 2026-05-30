@@ -10,32 +10,31 @@ export async function createTask(req: AuthRequest, res: Response) {
     }
 
     const topicId = Number(req.params.topicId);
+    if (Number.isNaN(topicId)) {
+      return res.status(400).json({ success: false, message: "Invalid topic id" });
+    }
+
     const parsed = createTaskSchema.parse(req.body);
 
-    const task = await TaskService.createTask(
-      req.user.id,
-      topicId,
-      parsed.title
-    );
+    const task = await TaskService.createTask(req.user.id, topicId, parsed.title);
 
     return res.status(201).json({
       success: true,
       data: task,
     });
   } catch (err: any) {
-    if (err.message === "TOPIC_NOT_FOUND") {
+    if (err?.message === "TOPIC_NOT_FOUND") {
       return res.status(404).json({ success: false, message: "Topic not found" });
     }
 
-    if (err.name === "ZodError") {
-      return res.status(400).json({ success: false });
+    if (err?.name === "ZodError") {
+      return res.status(400).json({ success: false, message: "Invalid request body" });
     }
 
     console.error(err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 }
-
 
 export async function completeTask(req: AuthRequest, res: Response) {
   try {
@@ -44,12 +43,15 @@ export async function completeTask(req: AuthRequest, res: Response) {
     }
 
     const taskId = Number(req.params.taskId);
+    if (Number.isNaN(taskId)) {
+      return res.status(400).json({ success: false, message: "Invalid task id" });
+    }
 
     await TaskService.completeTask(req.user.id, taskId);
 
     return res.status(200).json({ success: true });
   } catch (err: any) {
-    if (err.message === "TASK_NOT_FOUND") {
+    if (err?.message === "TASK_NOT_FOUND") {
       return res.status(404).json({ success: false, message: "Task not found" });
     }
 

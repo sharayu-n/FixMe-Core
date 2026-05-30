@@ -1,4 +1,3 @@
-// src/Services/goal.service.ts
 import prisma from "../Utilities/prisma";
 import { aiService } from "./ai.service";
 import {
@@ -9,18 +8,13 @@ import {
 } from "../Enums";
 
 export async function createGoal(userId: number, dto: any) {
-  // 1️⃣ Create goal
   const goal = await prisma.goals.create({
     data: {
       user_id: userId,
       title: dto.title,
       description: dto.description ?? null,
-      target_start: dto.target_start
-        ? new Date(dto.target_start)
-        : null,
-      target_end: dto.target_end
-        ? new Date(dto.target_end)
-        : null,
+      target_start: dto.target_start ? new Date(dto.target_start) : null,
+      target_end: dto.target_end ? new Date(dto.target_end) : null,
       priority: dto.priority ?? GoalPriority.MEDIUM,
       goal_expertise: dto.goal_expertise ?? GoalExpertise.BEGINNER,
       status: 0,
@@ -28,13 +22,10 @@ export async function createGoal(userId: number, dto: any) {
     },
   });
 
-  // 2️⃣ Generate topics
   const generatedTopics = await aiService.generateTopics(goal);
-
   const fullTopics = [];
 
   for (const topic of generatedTopics) {
-    // 3️⃣ Save topic
     const savedTopic = await prisma.topics.create({
       data: {
         goal_id: goal.id,
@@ -47,12 +38,7 @@ export async function createGoal(userId: number, dto: any) {
       },
     });
 
-    // 4️⃣ Generate tasks for topic
-    const generatedTasks = await aiService.generateTasks(
-      savedTopic,
-      goal
-    );
-
+    const generatedTasks = await aiService.generateTasks(savedTopic, goal);
     const savedTasks = [];
 
     for (const task of generatedTasks) {
@@ -80,4 +66,19 @@ export async function createGoal(userId: number, dto: any) {
     goal,
     topics: fullTopics,
   };
+}
+
+export async function getById(goalId: number) {
+  return prisma.goals.findUnique({
+    where: {
+      id: goalId,
+    },
+    include: {
+      topics: {
+        include: {
+          tasks: true,
+        },
+      },
+    },
+  });
 }
