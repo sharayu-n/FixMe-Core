@@ -5,7 +5,13 @@ import { errorHandler } from "./Middlewares/error.middleware";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(",") || [],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Mount ALL API routes under /api/v1
