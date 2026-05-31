@@ -1,11 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 
-export interface AuthRequest extends Request {
-  user?: { id: number; email?: string };
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: number; email?: string };
+    }
+  }
 }
 
-export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
+export const requireAuth: RequestHandler = (req, res, next) => {
   try {
     const auth = req.headers.authorization;
 
@@ -36,4 +40,6 @@ export function requireAuth(req: AuthRequest, res: Response, next: NextFunction)
     console.error(err);
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
-}
+};
+
+export {};

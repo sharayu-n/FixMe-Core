@@ -8,8 +8,8 @@ import {
 
 const router = Router();
 
-router.post("/", requireAuth as any, addToToday as any);
-router.get("/today", requireAuth as any, getToday as any);
-router.patch("/:id/complete", requireAuth as any, completeItem as any);
+router.post("/", requireAuth, addToToday);
+router.get("/today", requireAuth, getToday);
+router.patch("/:id/complete", requireAuth, completeItem);
 
 export default router;

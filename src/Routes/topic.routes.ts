@@ -5,9 +5,9 @@ import { createTask } from "../Controllers/task.controller";
 
 const router = Router();
 
-router.post("/:goalId/topics", requireAuth as any, createTopic as any);
+router.post("/:goalId/topics", requireAuth, createTopic);
 
 // Nested task creation under a topic
-router.post("/:topicId/tasks", requireAuth as any, createTask as any);
+router.post("/:topicId/tasks", requireAuth, createTask);
 
 export default router;

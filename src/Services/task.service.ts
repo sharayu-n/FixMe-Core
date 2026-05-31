@@ -1,11 +1,11 @@
 import prisma from "../Utilities/prisma";
-import { streakService } from "./streak.service";
+import { TaskStatus, TopicStatus } from "../Enums";
+
 export async function createTask(
   userId: number,
   topicId: number,
   title: string
 ) {
-  // 1️⃣ Verify topic belongs to logged-in user
   const topic = await prisma.topics.findFirst({
     where: {
       id: topicId,
@@ -19,7 +19,6 @@ export async function createTask(
     throw new Error("TOPIC_NOT_FOUND");
   }
 
-  // 2️⃣ Find max sequence order
   const lastTask = await prisma.tasks.findFirst({
     where: { topic_id: topicId },
     orderBy: { sequence_order: "desc" },
@@ -27,13 +26,12 @@ export async function createTask(
 
   const nextOrder = lastTask ? lastTask.sequence_order + 1 : 1;
 
-  // 3️⃣ Create task
   const task = await prisma.tasks.create({
     data: {
       topic_id: topicId,
       title,
       sequence_order: nextOrder,
-      status: 0,
+      status: TaskStatus.NOT_STARTED,
     },
   });
 
@@ -41,7 +39,6 @@ export async function createTask(
 }
 
 export async function completeTask(userId: number, taskId: number) {
-  // 1️⃣ Verify task belongs to logged-in user
   const task = await prisma.tasks.findFirst({
     where: {
       id: taskId,
@@ -64,16 +61,14 @@ export async function completeTask(userId: number, taskId: number) {
     throw new Error("TASK_NOT_FOUND");
   }
 
-  // 2️⃣ Mark task as completed
   await prisma.tasks.update({
     where: { id: taskId },
-    data: { status: 1 },
+    data: { status: TaskStatus.COMPLETED },
   });
 
   const topicId = task.topic_id;
   const goalId = task.topics.goal_id;
 
-  // 3️⃣ Recalculate topic progress
   const totalTasks = await prisma.tasks.count({
     where: { topic_id: topicId },
   });
@@ -81,23 +76,23 @@ export async function completeTask(userId: number, taskId: number) {
   const completedTasks = await prisma.tasks.count({
     where: {
       topic_id: topicId,
-      status: 1,
+      status: TaskStatus.COMPLETED,
     },
   });
 
-  const topicProgress = Math.floor(
-    (completedTasks / totalTasks) * 100
-  );
+  const topicProgress = Math.floor((completedTasks / totalTasks) * 100);
 
   await prisma.topics.update({
     where: { id: topicId },
     data: {
       progress_percent: topicProgress,
-      status: topicProgress === 100 ? 1 : 0,
+      status:
+        topicProgress === 100
+          ? TopicStatus.COMPLETED
+          : TopicStatus.IN_PROGRESS,
     },
   });
 
-  // 4️⃣ Recalculate goal progress
   const totalTopics = await prisma.topics.count({
     where: { goal_id: goalId },
   });
@@ -105,13 +100,11 @@ export async function completeTask(userId: number, taskId: number) {
   const completedTopics = await prisma.topics.count({
     where: {
       goal_id: goalId,
-      status: 1,
+      status: TopicStatus.COMPLETED,
     },
   });
 
-  const goalProgress = Math.floor(
-    (completedTopics / totalTopics) * 100
-  );
+  const goalProgress = Math.floor((completedTopics / totalTopics) * 100);
 
   await prisma.goals.update({
     where: { id: goalId },
@@ -121,7 +114,5 @@ export async function completeTask(userId: number, taskId: number) {
     },
   });
 
-
   return { success: true };
 }
-

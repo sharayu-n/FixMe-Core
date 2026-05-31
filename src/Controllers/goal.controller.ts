@@ -1,9 +1,9 @@
-import { Response } from "express";
+
 import { createGoalSchema } from "../Schemas/goal.schema";
 import * as GoalService from "../Services/goal.service";
-import { AuthRequest } from "../Middlewares/auth.middleware";
+import { Request, Response } from "express";
 
-export async function createGoal(req: AuthRequest, res: Response) {
+export async function createGoal(req: Request, res: Response) {
   try {
     const parsed = createGoalSchema.parse(req.body);
 
@@ -36,7 +36,7 @@ export async function createGoal(req: AuthRequest, res: Response) {
   }
 }
 
-export async function getById(req: AuthRequest, res: Response) {
+export async function getById(req: Request, res: Response) {
   try {
     if (!req.user) {
       return res.status(401).json({

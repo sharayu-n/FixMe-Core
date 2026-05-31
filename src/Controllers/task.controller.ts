@@ -1,9 +1,9 @@
-import { Response } from "express";
-import { AuthRequest } from "../Middlewares/auth.middleware";
+
+import { Request, Response } from "express";
 import { createTaskSchema } from "../Schemas/task.schema";
 import * as TaskService from "../Services/task.service";
 
-export async function createTask(req: AuthRequest, res: Response) {
+export async function createTask(req: Request, res: Response) {
   try {
     if (!req.user) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -36,7 +36,7 @@ export async function createTask(req: AuthRequest, res: Response) {
   }
 }
 
-export async function completeTask(req: AuthRequest, res: Response) {
+export async function completeTask(req: Request, res: Response) {
   try {
     if (!req.user) {
       return res.status(401).json({ success: false });

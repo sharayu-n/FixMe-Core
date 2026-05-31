@@ -1,9 +1,9 @@
 import { Response } from "express";
-import { AuthRequest } from "../Middlewares/auth.middleware";
+import { Request } from "express";
 import { createTopicSchema } from "../Schemas/topic.schema";
 import * as TopicService from "../Services/topic.service";
 
-export async function createTopic(req: AuthRequest, res: Response) {
+export async function createTopic(req: Request, res: Response) {
   try {
     if (!req.user) {
       return res.status(401).json({ success: false, message: "Unauthorized" });

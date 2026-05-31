@@ -5,7 +5,7 @@ import { goalCreateLimiter } from "../Middlewares/rateLimit.middleware";
 
 const router = Router();
 
-router.post("/", requireAuth as any, goalCreateLimiter, createGoal as any);
-router.get("/:goalId", requireAuth as any, getById as any);
+router.post("/", requireAuth, goalCreateLimiter, createGoal);
+router.get("/:goalId", requireAuth, getById);
 
 export default router;

@@ -4,6 +4,6 @@ import { completeTask } from "../Controllers/task.controller";
 
 const router = Router();
 
-router.patch("/:taskId/complete", requireAuth as any, completeTask as any);
+router.patch("/:taskId/complete", requireAuth, completeTask);
 
 export default router;
